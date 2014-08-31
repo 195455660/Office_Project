@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <link rel="stylesheet" type="text/css" href="/static/css/office_login.css" />
+    <meta charset="UTF-8">
+    <title>
+        Login In
+    </title>
+</head>
+<body>
+    <div class="container">
+            <form method="post" action="/office_login/">
+
+                <h2 class="title">Please sign in</h2>
+                <input class="input" type="text" name="name" placeholder="Admin acount" />
+                <input class="input" type="password" name="passwd" placeholder="Password" /></br>
+                <input type="submit" value="Sign In" />
+                <input type="reset" value="Cancel" />
+            </form>
+        <a href="/office_login?name=admin&passwd=admin">a</a>
+    </div>
+<script type="text/javascript">
+    function clear_input()
+    {
+        getElimentByID('input').value = '';
+    }
+</script>
+</body>
+</html>
