@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
+<html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>Add Person</title>
+    <link type="text/css" href="/static/css/locate_infoAdd.css" rel="stylesheet" />
 </head>
 <body>
-    <form method="post" action="/add/">
-        <label for="name">姓名：</label>
-        <input type="text" name="name" /> </br>
-        <label for="work_id">工号：</label>
-        <input type="text" name="work_id" /></br>
-        <label for="region">区域：</label>
-        <input type="tel" name="region" /></br>
-        <label for="">分机：</label>
-        <input type="text" name="tel" /></br>
-        <label for="description">备注：</label>
-        <textarea name="description" placeholder="不超过20字" ></textarea></br>
-        <input type="submit" value="添加" />
-        <input type="reset" value="重置" />
-    </form>
-    <a href="/toMainPage">Return MainPage</a>
+    <div class="container">
 
-    {% if success %}
-        <p>Add successed!.</p>
-   {% endif %}
+        <div>
+            <form method="post" action="/add/">
+                <label for="name">姓名：</label>
+                <input type="text" name="name" /> </br>
+                <label for="work_id">工号：</label>
+                <input type="text" name="work_id" /></br>
+                <label for="region">区域：</label>
+                <input type="tel" name="region" /></br>
+                <label for="">分机：</label>
+                <input type="text" name="tel" /></br>
+                <label for="description">备注：</label>
+                <textarea name="description" placeholder="不超过20字" ></textarea></br>
+                <input type="submit" value="添加" />
+                <input type="reset" value="重置" />
+            </form>
+            <a href="/toMainPage">Return MainPage</a>
 
-   {% if Error %}
-        <p>Add Failed! Please submit once again.</p>
-   {% endif %}
+            {% if success %}
+                 <p>Add successed!.</p>
+            {% endif %}
 
-    {{ add_items }}
+            {% if Error %}
+                 <p>Add Failed! Please submit once again.</p>
+            {% endif %}
+
+            {{ add_items }}
+        </div>
+    </div>
 </body>
 </html>

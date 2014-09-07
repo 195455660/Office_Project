@@ -23,7 +23,7 @@ def office_login(request):
         name_check = util.check_login(name, pw)
         if not name_check:
             #return HttpResponseRedirect('/toMainPage/?name='+name)
-            return render_to_response('office_mainpage.html',context_instance=RequestContext(request))
+            return render_to_response('office_mainpage.html', {'name':name}, context_instance=RequestContext(request))
     return render_to_response('office_login.html',{'err': True})
 
 def locate_search(request):
