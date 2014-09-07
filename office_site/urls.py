@@ -18,10 +18,16 @@ urlpatterns = patterns('',
     url(r'^login/$', view.login),
     url(r'^office_login/$', view.office_login),
     url(r'^locate_search/$', view.locate_search),
+    #add work person
     url(r'^add/$', view.toAddPage),
+    url(r'^modifyperson/$', view.locate_modifyinfo),
     url(r'^addperson/$', view.locate_addinfo),
     url(r'^item_search/$', view.item_search),
+    #转到添加网页
     url(r'^toInsertItem/$', view.toInsertItemPage),
+    #转到修改网页
+    url(r'^toModifyItem/$', view.toModifyItemPage),
+    #回到主页面
     url(r'^toMainPage/$', view.toMainPage),
 
 

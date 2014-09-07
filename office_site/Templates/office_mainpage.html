@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Mainpage</title>
     <link href="/static/css/office_mainpage.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" ></script>
+    <script src="/static/js/office_mainpage.js"></script>
 </head>
 <body>
     <div class="navbar">
@@ -42,6 +44,12 @@
                                 <li><a href="/toInsertItem">添加记录</a></li>
                             </ul>
                         </div>
+                        <div class="leftbar_item" onclick="show_locate_modify()">修改记录</div>
+                        <div id="locate_modify">
+                            <ul>
+                                <li><a href="/toModifyItem">修改记录</a></li>
+                            </ul>
+                        </div>
                 </div>
 
                 <!--
@@ -71,13 +79,17 @@
                                 <th>Region</th>
                                 <th>Tel</th>
                                 <th>Description</th>
+                                <th>Modify</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody id="search_content">
+                        {{ if  }}
+                            <tbody id="search_content">
 
 
 
-                        </tbody>
+                            </tbody>
+                        {{ endif }}
                     </table>
                 </div>
 
@@ -87,98 +99,7 @@
     <div style="clear: both"></div>
 <div class="footer" >Footer@Edit By YS</div>
 <script type="text/javascript">
-    var xmlhttp = null;
-    function loadXmlhttp(search_num)
-    {
-        var req;
-	    if(window.XMLHttpRequest)
-	    {
-	        req=new XMLHttpRequest();
-	    }else if(window.ActiveXObject)
-	    {
-	        req=new ActiveXObject("MSXML2.XMLHTTP.3.0");
-	    }
 
-	    if(req)
-	    {
-	        req.open("GET","/item_search?find="+search_num,true);
-	        req.onreadystatechange=function()
-	        {
-	        	if(req.readyState == 4 && req.status == 200)
-		        {
-                        //alert(req.responseText)
-                        document.getElementById("search_window").innerHTML = req.responseText
-		        }
-	        }
-	        req.send();
-	    }
-    }
-
-    function search_byname()
-    {
-        var req;
-        value = document.getElementById("search_text").value
-        //alert(value)
-	    if(window.XMLHttpRequest)
-	    {
-	        req=new XMLHttpRequest();
-	    }else if(window.ActiveXObject)
-	    {
-	        req=new ActiveXObject("Microsoft.XMLHTTP");
-	    }
-
-	    if(req)
-	    {
-            //alert("Ajax url is:/search_ByName?name="+value);
-	        req.open("GET","/search_ByName?name="+value,true);
-	        req.onreadystatechange=function()
-	        {
-                //alert(req.readyState)
-                //alert(req.status)
-	        	if(req.readyState == 4 && req.status == 200) {
-                    //alert(req.responseText)
-                    var text = req.responseText
-                    var data = eval('(' + text + ')')
-                    //alert('data is ' + data)
-                    //alert(data)
-                    //alert(data[1].workid)
-                    //alert('data len is'+data.length)
-                    json_to_table(data)
-		        }
-	        }
-	        req.send();
-	    }
-    }
-
-
-    function json_to_table(data)
-    {
-        var tbody2 = "";
-        if (data != "") {
-            $.each(data, function (n, value) {
-                //alert(n + ' ' + value);
-                var trs = "";
-                trs += "<tr><td>" + value.name + "</td><td>" + value.workid + "</td><td>" + value.region + "</td><td>" + value.phone + "</td><td>" + value.description + "</td></tr>";
-                tbody2 += trs;
-            });
-            $("#search_content").html(tbody2)
-            $("#result1").show()
-        }else {
-            tbody2="<strong>not exist.</strong>";
-            $("#search_window").html(tbody2)
-        }
-        //$("#sub_table_header").after(row_str);
-    }
-
-    function show_locate_search()
-    {
-        $("#locate_search").slideToggle();
-    }
-    function show_locate_add()
-    {
-        $("#locate_add").slideToggle();
-    }
-   // window.onload = loadXmlhttp();
 </script>
 </body>
 </html>

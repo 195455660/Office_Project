@@ -20,7 +20,15 @@ body{
     border-radius: 3px;
     text-align: center;
     margin: 0 auto;
-    width: 300px;
-    margin-top: 200px;
+    width: 320px;
+    margin-top: 190px;
     background-color: lightskyblue;
+    padding: 5px;
+}
+form textarea{
+    width: 228px;
+}
+form input[type=submit]{
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
