@@ -36,4 +36,7 @@ urlpatterns = patterns('',
 
     #关于Chart图显示
     url(r'^chart/$', view.chart),
+
+    #分页测试
+    url(r'^pagination/$', view.toPagination),
 )

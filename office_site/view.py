@@ -164,3 +164,38 @@ def toMainPage(request):
 
 def chart(request):
     return render_to_response('ChartTest.html')
+
+
+
+#pagination test
+def toPagination(request):
+    return render_to_response('paginationTest.html')
+
+def toAddPage(request):
+    error = False
+    if 'name' in request.POST and 'work_id' in request.POST:
+        add_name = request.POST.get('name', '')
+        add_workid = request.POST.get('work_id', '')
+        if not add_name:
+            error = True
+        elif not add_workid:
+            error = True
+        else:
+            add_region = request.POST.get('region', ' ')
+            add_tel = request.POST.get('tel', ' ')
+            add_desc = request.POST.get('description', ' ')
+
+            #SQL_string = 'insert into office_user_item values( \'%s\',\'%s\',\'%s\',\'%s\',\'%s\')' % add_workid, add_name, add_region, add_tel, add_desc
+            #SQL_string = "insert into office_user_item values( '%%s','%%s','%%s','%%s','%%s')" % add_workid, add_name, add_region, add_tel, add_desc
+            conn = util.condb()
+            SQL_string = "insert into office_user_item values( %s,%s,%s,%s,%s)"
+            #args =(add_workid, add_name, add_region, add_tel, add_desc)
+            args =(add_workid, add_name, add_region, add_tel, add_desc)
+            #SQL_string = "insert into office_user_item values( '0001','admin1', 'C', '0001', 'adminB')"
+            cursor = conn.cursor()
+            cursor.execute(SQL_string,args)
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return render_to_response('locate_infoAdd.html', {'success': True})
+    return render_to_response('locate_infoAdd.html',{'Error': error})
