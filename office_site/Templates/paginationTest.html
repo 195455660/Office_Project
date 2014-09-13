@@ -3,73 +3,54 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" ></script>
+    <link href="/static/css/MyPagination.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/js/jquery-1.9.1.min.js" ></script>
 </head>
 <body>
     <div id="item_content">
-                <div id="search_window">
+        <div id="search_window">
 
-                    <div style="border-radius: 3px;margin-bottom: 20px;width: 300px;padding: 20px;text-align: center">
-    <h2>Search by Name or WorkID</h2>
-        Please input Name or workId</br></br>
-    <input type="text" id="search_text" placeholder="Input Name" style="border-radius:3px;width: 180px;height: 30px;border: 1px solid #cccccc;font-size: 15px;padding: 2px 5px" />
-    <button onclick="search_byname()" style=" width: 70px;height: 40px;border: 1px solid lavender;border-radius: 4px;background-color: #0088cc; margin-left: 20px;color: white;font-size: 20px;font-weight: bold;">查询</button>
-
-
-
-                </div>
-
-                <div id="result1" class="search_result" style="width: 600px">
-                    <ul style="list-style-type: none">
-                        <li>
-                            <a href="#" >[next]</a>
-                        </li>
-                        <li>
-                            <a href="#" >1</a>
-                        </li>
-                        <li>
-                            <a onclick="loadpage(2)">2</a>
-                        </li>
-                        <li>
-                            <a>3</a>
-                        </li>
-                        <li>
-                            <a>[pre]</a>
-                        </li>
-                    </ul>
-                    <table style="width: 100%;line-height: 40px">
-                        <thead>
-                            <tr>
-                                <th>Work ID</th>
-                                <th>Name</th>
-                                <th>Region</th>
-                                <th>Tel</th>
-                                <th>Description</th>
-                                <th>Modify</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                            <tbody id="search_content">
-
-
-
-                            </tbody>
-                    </table>
-                    <div id="pagecount">
-
-                    </div>
-                </div>
-
+            <div class="search_title">
+                <h2>Search by Name or WorkID</h2>
+                Please input Name or workId</br></br>
+                <input type="text" id="search_text" placeholder="Input Name" />
+                <button onclick="search_byname()">查询</button>
             </div>
 
-</div>
-<script type="text/javascript">
+            <div id="pagecount"></div>
+            <div style="clear: both"></div>
+            <div id="result1" class="search_result">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Work ID</th>
+                            <th>Name</th>
+                            <th>Region</th>
+                            <th>Tel</th>
+                            <th>Description</th>
+                            <th>Modify</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                        <tbody id="search_content">
 
-    var page_item_count = 10;
-    var req;
-    var value1;
-function load_page(pagenum)
+
+
+                        </tbody>
+                </table>
+                <div id="pagecount"></div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+var item_count = 0;
+var page_item_count = 10;
+var req;
+var value1;
+function loadpage(pagenum)
 {
+    //value1 = document.getElementById("search_text").value;
+    //alert(value1)
     if(window.XMLHttpRequest)
     {
         req=new XMLHttpRequest();
@@ -77,24 +58,17 @@ function load_page(pagenum)
     {
         req=new ActiveXObject("Microsoft.XMLHTTP");
     }
-
     if(req)
     {
-        //alert("Ajax url is:/search_ByName?name="+value);
-        req.open("GET","/search_ByName?name="+value1+"",true);
-        req.onreadystatechange=function(){
-
-        }
-
+        req.open("GET","/search_ByName?name="+value1+"&page="+pagenum+"&pageItemCount="+page_item_count,true);
+        req.onreadystatechange=show_table
         req.send();
     }
 }
 function search_byname()
 {
-    //var req;
     value1 = document.getElementById("search_text").value;
-
-    alert(value1)
+    //alert(value1)
     if(window.XMLHttpRequest)
     {
         req=new XMLHttpRequest();
@@ -102,30 +76,66 @@ function search_byname()
     {
         req=new ActiveXObject("Microsoft.XMLHTTP");
     }
-
     if(req)
     {
-        //alert("Ajax url is:/search_ByName?name="+value);
-        req.open("GET","/search_ByName?name="+value1,true);
-        req.onreadystatechange=show_table
-
+        req.open("GET","/search_ByName?name="+value1+"&pageItemCount="+page_item_count,true);
+        req.onreadystatechange=function show_table()
+        {
+            if(req.readyState == 4 && req.status == 200) {
+                var text = req.responseText
+                var data = eval('(' + text + ')')
+                var tbody2 = "";
+                if (data != "") {
+                    $.each(data, function (n, value) {
+                        if(n==0){
+                            item_count = value/page_item_count+1;
+                            var num_list = "<ul class=\"ul_pages\">";
+                            for(var i=1;i<=item_count;i++)
+                                num_list += "<li ><a href=\"javascript:loadpage("+i+")\" > "+i+"</a></li>"
+                            num_list += "</ul>"
+                            $("#pagecount").html(num_list)
+                        }
+                        else {
+                            var trs = "";
+                            trs += "<tr><td>" + value.workid + "</td><td>" + value.name + "</td><td>" + value.region + "</td><td>" + value.phone + "</td><td>" + value.description + "</td>";
+                            trs += "<td><a href=\"/toModifyItem\?workid=" + value.workid + "&name=" + value.name + "&region=" + value.region + "&phone=" + value.phone + "&description=" + value.description + "\"><i class=\"fa fa-pencil-square-o\"></i></a></td>"
+                            trs += "<td><a href=\"/toDelItem\?workid=" + value.workid + "\"><i class=\"fa fa-times\"></i></a></td></tr>"
+                            tbody2 += trs;
+                        }
+                    });
+                    $("#search_content").html(tbody2)
+                    $("#result1").show()
+                }else {
+                    tbody2="<strong>not exist.</strong>";
+                    $("#search_content").html(tbody2)
+                }
+            }
+        }
         req.send();
     }
 }
 
 function show_table()
 {
-    //alert(req.readyState)
-    //alert(req.status)
     if(req.readyState == 4 && req.status == 200) {
-        //alert(req.responseText)
         var text = req.responseText
         var data = eval('(' + text + ')')
-        //alert('data is ' + data)
-        //alert(data)
-        //alert(data[1].workid)
-        //alert('data len is'+data.length)
-        json_to_table(data)
+        var tbody2 = "";
+        if (data != "") {
+            $.each(data, function (n, value) {
+                //alert(n + ' ' + value);
+                var trs = "";
+                trs += "<tr><td>" + value.workid + "</td><td>" + value.name + "</td><td>" + value.region + "</td><td>" + value.phone + "</td><td>" + value.description + "</td>";
+                trs += "<td><a href=\"/toModifyItem\?workid="+value.workid+"&name="+value.name+"&region="+value.region+"&phone="+value.phone+"&description="+value.description+"\"><i class=\"fa fa-pencil-square-o\"></i></a></td>"
+                trs += "<td><a href=\"/toDelItem\?workid="+value.workid+"\"><i class=\"fa fa-times\"></i></a></td></tr>"
+                tbody2 += trs;
+            });
+            $("#search_content").html(tbody2)
+            $("#result1").show()
+        }else {
+            tbody2="<strong>not exist.</strong>";
+            $("#search_content").html(tbody2)
+        }
     }
 }
 function json_to_table(data)
@@ -146,7 +156,6 @@ function json_to_table(data)
         tbody2="<strong>not exist.</strong>";
         $("#search_content").html(tbody2)
     }
-    //$("#sub_table_header").after(row_str);
 }
 </script>
 </body>

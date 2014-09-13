@@ -41,6 +41,7 @@ def locate_search(request):
 def toAddPage(request):
     error = False
     if 'name' in request.POST and 'work_id' in request.POST:
+
         add_name = request.POST.get('name', '')
         add_workid = request.POST.get('work_id', '')
         if not add_name:
@@ -60,11 +61,11 @@ def toAddPage(request):
             args =(add_workid, add_name, add_region, add_tel, add_desc)
             #SQL_string = "insert into office_user_item values( '0001','admin1', 'C', '0001', 'adminB')"
             cursor = conn.cursor()
-            cursor.execute(SQL_string,args)
-            conn.commit()
+            #cursor.execute(SQL_string,args)
+            #conn.commit()
             cursor.close()
             conn.close()
-            return render_to_response('locate_infoAdd.html', {'success': True})
+            return render_to_response('office_mainpage.html', {'success': True})
     return render_to_response('locate_infoAdd.html',{'Error': error})
 
 
@@ -112,29 +113,60 @@ def item_search(request):
     return HttpResponse(content)
 
 
+#search_ByName page_count
 def search_ByName(request):
-    list = []
     if 'name' in request.GET:
         name = request.GET['name']
-        conn = util.condb()
-        cursor = conn.cursor()
-        str = "select * from office_user_item where name = '%s' " % name
-        cursor.execute(str)
-        conn.commit()
-        items = cursor.fetchall()
-        for item in items:
-            temp = {}
-            temp['workid'] = item[0]
-            temp['name'] = item[1]
-            temp['region'] = item[2]
-            temp['phone'] = item[3]
-            temp['description'] = item[4]
-            list.append(temp)
-        #json_data = json.dump(temp)
-        json_data = json.dumps(list)
-        cursor.close()
-        conn.close()
-        return HttpResponse(json_data)
+        if 'page' in request.GET:
+            list = []
+            page = int(request.GET['page'])
+            page_count = int(request.GET['pageItemCount'])
+            begin = (page -1) * page_count
+            conn = util.condb()
+            cursor = conn.cursor()
+            str = "select * from office_user_item where name = '%s'  limit %s,%s" % (name, begin, page_count)
+            cursor.execute(str)
+            conn.commit()
+            items = cursor.fetchall()
+            for item in items:
+                temp = {}
+                temp['workid'] = item[0]
+                temp['name'] = item[1]
+                temp['region'] = item[2]
+                temp['phone'] = item[3]
+                temp['description'] = item[4]
+                list.append(temp)
+            #json_data = json.dump(temp)
+            json_data = json.dumps(list)
+            cursor.close()
+            conn.close()
+            return HttpResponse(json_data)
+        else:
+            first_page = []
+            page_count = int(request.GET['pageItemCount'])
+            conn = util.condb()
+            cursor = conn.cursor()
+            sql_item_count = "select count(*) from office_user_item where name= '%s' " % name
+            cursor.execute(sql_item_count)
+            conn.commit()
+            item_count = cursor.fetchall()
+            first_page.append(item_count[0])
+            str = "select * from office_user_item where name = '%s'  limit 0,%s" % (name, page_count)
+            cursor.execute(str)
+            conn.commit()
+            items = cursor.fetchall()
+            for item in items:
+                temp = {}
+                temp['workid'] = item[0]
+                temp['name'] = item[1]
+                temp['region'] = item[2]
+                temp['phone'] = item[3]
+                temp['description'] = item[4]
+                first_page.append(temp)
+            json_data_1 = json.dumps(first_page)
+            cursor.close()
+            conn.close()
+            return HttpResponse(json_data_1)
         #return HttpResponse("[{'name':'admin','workid':1},{'name':'ys','workid':2}]")
     else:
         return HttpResponse('Ajax request search_ByName is success!')
@@ -171,31 +203,21 @@ def chart(request):
 def toPagination(request):
     return render_to_response('paginationTest.html')
 
-def toAddPage(request):
-    error = False
-    if 'name' in request.POST and 'work_id' in request.POST:
-        add_name = request.POST.get('name', '')
-        add_workid = request.POST.get('work_id', '')
-        if not add_name:
-            error = True
-        elif not add_workid:
-            error = True
-        else:
-            add_region = request.POST.get('region', ' ')
-            add_tel = request.POST.get('tel', ' ')
-            add_desc = request.POST.get('description', ' ')
 
-            #SQL_string = 'insert into office_user_item values( \'%s\',\'%s\',\'%s\',\'%s\',\'%s\')' % add_workid, add_name, add_region, add_tel, add_desc
-            #SQL_string = "insert into office_user_item values( '%%s','%%s','%%s','%%s','%%s')" % add_workid, add_name, add_region, add_tel, add_desc
-            conn = util.condb()
-            SQL_string = "insert into office_user_item values( %s,%s,%s,%s,%s)"
-            #args =(add_workid, add_name, add_region, add_tel, add_desc)
-            args =(add_workid, add_name, add_region, add_tel, add_desc)
-            #SQL_string = "insert into office_user_item values( '0001','admin1', 'C', '0001', 'adminB')"
-            cursor = conn.cursor()
-            cursor.execute(SQL_string,args)
-            conn.commit()
-            cursor.close()
-            conn.close()
-            return render_to_response('locate_infoAdd.html', {'success': True})
-    return render_to_response('locate_infoAdd.html',{'Error': error})
+# del item in search
+def del_item(request):
+    error ={'del': False}
+    if 'workid' in request.GET:
+        del_workid = request.GET['workid']
+        conn = util.condb()
+        SQL_string = "delete from office_user_item where workid = '%s' " % del_workid
+        cursor = conn.cursor()
+        count = cursor.execute(SQL_string)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        if count > 0:
+            error['del'] = True
+        return HttpResponse(json.dumps(error))
+    else:
+        return HttpResponse(json.dumps(error))

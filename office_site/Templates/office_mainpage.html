@@ -3,12 +3,14 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Mainpage</title>
+    <link href="/static/css/Z_index.css" rel="stylesheet" type="text/css" />
     <link href="/static/css/office_mainpage.css" rel="stylesheet" type="text/css" />
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" ></script>
-    <script src="/static/js/office_mainpage.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.9.1.min.js" ></script>
+    <script type="text/javascript" src="/static/js/office_mainpage.js"></script>
 </head>
 <body>
+<div class="container" style="margin-bottom: -60px">
     <div class="navbar">
         <a href="">Office Project</a>
         <ul>
@@ -16,7 +18,7 @@
                 <a href="#">位置查询</a>
             </li>
             <li>
-                <a href="#">错误提交分析</a>
+                <a href="javascript:error_analyse()">错误提交分析</a>
             </li>
         </ul>
         <div class="loginName_rightbar">
@@ -26,52 +28,50 @@
         </div>
     </div>
     <div style="clear: both"></div>
-    <div class="container">
+    <div class="content_container">
             <div class="leftbar">
                 <div class="locate_item">
                     <h4>位置查询</h4>
-                        <div class="leftbar_item" onclick="show_locate_search()">位置查询</div>
-                        <div id="locate_search">
-                            <ul>
-                                <li><a href="#" onclick="loadXmlhttp(1)">按工号或名字查询</a></li>
-                                <li><a href="#" onclick="loadXmlhttp(2)">按电话号码查询</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="leftbar_item" onclick="show_locate_add()">添加记录</div>
-                        <div id="locate_add">
-                            <ul>
-                                <li><a href="/toInsertItem">添加记录</a></li>
-                            </ul>
-                        </div>
-                        <div class="leftbar_item" onclick="show_locate_modify()">修改记录</div>
-                        <div id="locate_modify">
-                            <ul>
-                                <li><a href="/toModifyItem">修改记录</a></li>
-                            </ul>
-                        </div>
+                    <div class="leftbar_item" onclick="show_locate_search()">
+                        员工位置查询
+                        <i id="i" style="float: right;line-height: 20px" class="fa fa-angle-double-down"></i>
+                    </div>
+                    <div id="locate_search">
+                        <ul>
+                            <li><a href="#" onclick="loadXmlhttp(1)">按工号或名字查询</a></li>
+                            <li><a href="#" onclick="loadXmlhttp(2)">按电话号码查询</a></li>
+                        </ul>
+                    </div>
+                    <div class="leftbar_item" onclick="show_locate_add()">添加员工信息</div>
+                    <div id="locate_add">
+                        <ul>
+                            <li>
+                                <a href="javascript:show_modify_table()">添加记录</a>
+                                <!-- <a href="/toInsertItem">添加记录</a> -->
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="leftbar_item" onclick="show_locate_modify()">修改记录</div>
+                    <div id="locate_modify">
+                        <ul>
+                            <li><a href="/toModifyItem">修改记录</a></li>
+                        </ul>
+                    </div>
                 </div>
-
-                <!--
-
-                 <div class="error">
+            </div>
+         <!--   <div class="error">
                    <h4>错误报告统计</h4>
                     <ul style="text-decoration: none">
                         <li>统计查询</li>
                         <li>统计记录</li>
                     </ul>
-                </div>
-
-                 -->
-
-            </div>
+                </div>   -->
             <div id="item_content">
                 <div id="search_window">
 
                 </div>
-
-                <div id="result1" class="search_result" style="width: 600px">
-                    <table style="width: 100%;line-height: 40px">
+                <div id="result1" class="search_result">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Work ID</th>
@@ -83,26 +83,67 @@
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        {{ if  }}
-                            <tbody id="search_content">
+                        <tbody id="search_content">
 
 
 
-                            </tbody>
-                        {{ endif }}
+                        </tbody>
                     </table>
-                    <div id="pagecount">
-
-                    </div>
+                    <div id="pagecount"></div>
                 </div>
 
             </div>
             <div style="clear: both"></div>
     </div>
-    <div style="clear: both"></div>
+    <div class="content_container1" >
+        <div style="background-color: lightgreen;width: 100%;height: 100%">
+            content2
+        </div>
+    </div>
+</div>
+<div style="clear: both"></div>
 <div class="footer" >Footer@Edit By YS</div>
-<script type="text/javascript">
+<div id="LoginBox">
+    <div class="row1">
+        添加员工记录<a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn">×</a>
+    </div>
+    <div class="add_form">
+        <form method="post" action="/add/">
+            <label for="name">姓名：</label>
+            <input type="text" name="name" /> </br>
+            <label for="work_id">工号：</label>
+            <input type="text" name="work_id" /></br>
+            <label for="region">区域：</label>
+            <input type="tel" name="region" /></br>
+            <label for="">分机：</label>
+            <input type="text" name="tel" /></br>
+            <label for="description">备注：</label>
+            <textarea name="description" placeholder="不超过20字" ></textarea></br>
+            <input type="submit" value="添加" />
+            <input type="reset" value="重置" />
+        </form>
+    </div>
+</div>
 
-</script>
+        {% if success %}
+            <di class="grey_window">
+                <div id="successBox">
+                    <div class="row1">
+                        添加成功<a href="javascript:close_suc()" title="关闭窗口" class="close_btn">×</a>
+                    </div>
+                    <p>Add successed!.</p>
+                </div>
+            </di>
+        {% endif %}
+        {% if Error %}
+            <di class="grey_window">
+                <div id="successBox">
+                    <div class="row1">
+                        添加失败<a href="javascript:close_suc()" title="关闭窗口" class="close_btn">×</a>
+                    </div>
+                    <p>Add Failed! Please submit once again.</p>
+                </div>
+            </di>
+        {% endif %}
 </body>
 </html>

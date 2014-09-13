@@ -33,7 +33,8 @@ urlpatterns = patterns('',
 
     #使用Name进行查询
     url(r'^search_ByName/$', view.search_ByName),
-
+    #删除数据
+    url(r'^del/$', view.del_item),
     #关于Chart图显示
     url(r'^chart/$', view.chart),
 
